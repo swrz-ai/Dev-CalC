@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevCalc - Developer Tools</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --dark-primary: #2c3e50;
+            --light-bg: #f5f5f5;
+            --dark-bg: #1a1a1a;
+            --light-content: #ffffff;
+            --dark-content: #2d2d2d;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: #f0f0f0;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+        }
+        
+        body.dark-mode .navbar {
+            background-color: var(--dark-primary);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            margin-right: 20px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark-mode-toggle {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .main-content {
+            background-color: var(--light-content);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .main-content {
+            background-color: var(--dark-content);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        body.dark-mode .page-title {
+            color: #f0f0f0;
+        }
+        
+        .tools-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            flex: 0 0 250px;
+            background-color: var(--light-content);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .sidebar {
+            background-color: var(--dark-content);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tool-content {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .tool-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+        
+        .tool-tab {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        body.dark-mode .tool-tab {
+            background-color: #3d3d3d;
+        }
+        
+        .tool-tab:hover {
+            background-color: #e0e0e0;
+        }
+        
+        body.dark-mode .tool-tab:hover {
+            background-color: #4d4d4d;
+        }
+        
+        .tool-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        body.dark-mode .tool-tab.active {
+            background-color: var(--dark-primary);
+        }
+        
+        .tool-panel {
+            display: none;
+        }
+        
+        .tool-panel.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: #fff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.dark-mode .form-control {
+            background-color: #3d3d3d;
+            color: #f0f0f0;
+            border-color: #555;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .output-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 150px;
+            overflow: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .output-container {
+            background-color: #3d3d3d;
+            color: #f0f0f0;
+            border-color: #555;
+        }
+        
+        .color-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        
+        .matches-display {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 100px;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .matches-display {
+            background-color: #3d3d3d;
+            color: #f0f0f0;
+            border-color: #555;
+        }
+        
+        .match-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .match-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        body.dark-mode .match-item {
+            background-color: #4d4d4d;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .checkbox-input {
+            margin-right: 5px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .radio-input {
+            margin-right: 5px;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            background-color: #f0f0f0;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode footer {
+            background-color: #2d2d2d;
+            border-top-color: #444;
+            color: #aaa;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .footer-link {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        body.dark-mode .footer-link {
+            color: #f0f0f0;
+        }
+        
+        .copyright {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .tools-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: 0 0 auto;
+                margin-bottom: 20px;
+            }
+            
+            .navbar-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .navbar-nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+            
+            .nav-item {
+                margin-bottom: 5px;
+            }
+            
+            .btn-group {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#" class="navbar-brand">DevCalc</a>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Calculator Tools</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="developer-tools.html" class="nav-link active">Developer Tools</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+                    </li>
+                </ul>
+                <button class="dark-mode-toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="main-content">
+            <h1 class="page-title">Developer Tools</h1>
+            
+            <div class="tools-container">
+                <div class="sidebar">
+                    <ul class="tool-tabs">
+                        <li class="tool-tab active" onclick="showTool('json-formatter')">JSON Formatter</li>
+                        <li class="tool-tab" onclick="showTool('color-converter')">Color Converter</li>
+                        <li class="tool-tab" onclick="showTool('regex-tester')">Regex Tester</li>
+                        <li class="tool-tab" onclick="showTool('base64-converter')">Base64 Converter</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-content">
+                    <!-- JSON Formatter -->
+                    <div id="json-formatter" class="tool-panel active">
+                        <h2>JSON Formatter</h2>
+                        <div class="form-group">
+                            <label for="json-input" class="form-label">Input JSON:</label>
+                            <textarea id="json-input" class="form-control" placeholder="Paste your JSON here..."></textarea>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="formatJSON()">Format JSON</button>
+                            <button class="btn btn-secondary" onclick="minifyJSON()">Minify JSON</button>
+                            <button class="btn btn-danger" onclick="clearJSON()">Clear</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="json-output" class="form-label">Formatted JSON:</label>
+                            <div id="json-output" class="output-container"></div>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="copyToClipboard('json-output')">Copy to Clipboard</button>
+                    </div>
+                    
+                    <!-- Color Converter -->
+                    <div id="color-converter" class="tool-panel">
+                        <h2>Color Converter</h2>
+                        <div class="form-group">
+                            <label for="hex-input" class="form-label">HEX:</label>
+                            <input type="text" id="hex-input" class="form-control" placeholder="#RRGGBB or #RGB" oninput="convertFromHex()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rgb-input" class="form-label">RGB:</label>
+                            <input type="text" id="rgb-input" class="form-control" placeholder="rgb(255, 255, 255)" oninput="convertFromRGB()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="hsl-input" class="form-label">HSL:</label>
+                            <input type="text" id="hsl-input" class="form-control" placeholder="hsl(360, 100%, 100%)" oninput="convertFromHSL()">
+                        </div>
+                        
+                        <div class="color-preview" id="color-preview"></div>
+                    </div>
+                    
+                    <!-- Regex Tester -->
+                    <div id="regex-tester" class="tool-panel">
+                        <h2>Regex Tester</h2>
+                        <div class="form-group">
+                            <label for="regex-pattern" class="form-label">Regular Expression:</label>
+                            <input type="text" id="regex-pattern" class="form-control" placeholder="Enter regex pattern...">
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="flag-g" class="checkbox-input" checked>
+                                g (global)
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="flag-i" class="checkbox-input">
+                                i (case insensitive)
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="flag-m" class="checkbox-input">
+                                m (multiline)
+                            </label>
+                        </div>
+          
+(Content truncated due to size limit. Use line ranges to read in chunks)
